@@ -5,12 +5,11 @@ function Sidebar(){
             <h1>
                 This is side bar.
             </h1>
-            <div className="sidebar">Name 1</div>
-            <div className="sidebar">Name 2</div>
-            <div className="sidebar">Name 3</div>
-            <div className="sidebar">Name 4</div>
-            <div className="sidebar">Name 5</div>
-            
+            <div className="sidebar-item">Name 1</div>
+            <div className="sidebar-item">Name 2</div>
+            <div className="sidebar-item">Name 3</div>
+            <div className="sidebar-item">Name 4</div>
+            <div className="sidebar-item">Name 5</div>
         </div>
     )
 }

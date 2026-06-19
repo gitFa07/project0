@@ -1,5 +1,6 @@
 import Message from "./Message"
 import { useState } from "react"
+import { IoSend } from "react-icons/io5";
 function ChatWindow({text, sender}){
     const [messages, setMessages] = useState([{
         text: "Hello", 
@@ -16,8 +17,8 @@ function ChatWindow({text, sender}){
         setInput("");
     };
     return(
-        <div>
-            <div>
+        <div className="chat-window">
+            <div className="messgaes-container">
                 { 
                 messages.map((msg, index) => (
                     <Message 
@@ -35,7 +36,7 @@ function ChatWindow({text, sender}){
                 value={input} 
                 onChange={(e)=>{ setInput(e.target.value)}}/>
                 
-                <button onClick={sendMessage}>Send</button>
+                <button onClick={sendMessage}><IoSend /></button>
             </div>
         </div>
     )
