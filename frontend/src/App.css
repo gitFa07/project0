@@ -2,7 +2,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #f4f4f4;
+    background: white;
 }
 
 .app {
@@ -74,10 +74,14 @@ body {
 
 /* Input Area */
 .InputField {
+    position: fixed;
+    bottom: 0;
+    right: 0;
     display: flex;
     padding: 15px;
     border-top: 1px solid #ddd;
     background: #fafafa;
+    width:60%;
 }
 
 .InputField input {
