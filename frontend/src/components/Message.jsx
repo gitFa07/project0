@@ -1,3 +1,4 @@
+import ReactMarkdown from "react-markdown";
 function Message({text, sender}){
     return (
   <div
@@ -7,9 +8,9 @@ function Message({text, sender}){
         : "mr-auto bg-gray-700"
     }`}
   >
-    {text}
+    <ReactMarkdown>{text}</ReactMarkdown>
   </div>
 );
 }
 
-export default Message
+export default Message;
