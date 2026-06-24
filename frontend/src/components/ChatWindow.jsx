@@ -80,42 +80,54 @@ function ChatWindow() {
   };
 
   return (
-    <div className="chat-window">
-      <div className="messages-container">
-        {messages.map((msg, index) => (
-          <Message
-            key={index}
-            text={msg.text}
-            sender={msg.sender}
-          />
-        ))}
+    
+  <div className="flex-1 flex flex-col bg-[#212121] text-white">
+    
+    {/* Messages Area */}
+    <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      {messages.map((msg, index) => (
+        <Message
+          key={index}
+          text={msg.text}
+          sender={msg.sender}
+        />
+      ))}
 
-        { 
-            loading && <div>
-                AI is responding...
-            </div>
-        }
+      {loading && (
+        <div className="text-gray-400 italic">
+          AI is responding...
+        </div>
+      )}
+    </div>
 
-      </div>
-
-      <div className="InputField">
+    {/* Input Area */}
+    <div className="border-t border-gray-800 p-4">
+      <div className="max-w-4xl mx-auto flex items-center bg-[#2f2f2f] rounded-2xl px-4 py-2">
+        
         <input
           type="text"
           placeholder="Type your message"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e)=> {
-            if(e.key === "Enter")sendMessage()
+          onKeyDown={(e) => {
+            if (e.key === "Enter") sendMessage();
           }}
           disabled={loading}
+          className="flex-1 bg-transparent outline-none text-white placeholder-gray-400"
         />
 
-        <button onClick={sendMessage} disabled={loading}>
+        <button
+          onClick={sendMessage}
+          disabled={loading}
+          className="ml-3 text-xl hover:scale-110 transition-transform disabled:opacity-50"
+        >
           <IoSend />
         </button>
+
       </div>
     </div>
-  );
+  </div>
+);
 }
 
 export default ChatWindow;
