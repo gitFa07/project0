@@ -1,24 +1,40 @@
 import Message from "./Message";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IoSend } from "react-icons/io5";
 
 function ChatWindow() {
-  const [messages, setMessages] = useState([
-    {
-      text: "Hello",
-      sender: "user1",
-    },
+   const [messages, setMessages] = useState([
+  //   {
+  //     text: "Hello",
+  //     sender: "user1",
+  //   },
   ]);
 
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+  getChats();
+}, []);
+
+  const getChats = async() => {
+    try {
+        const response = await fetch("http://localhost:5000/chats");
+        const data = await response.json();
+        if(data.success){
+          setMessages(data.chats);
+        }
+    } catch (error) {
+      console.log("Error fetching chats", error);
+    }
+  }
 
   const sendMessage = async () => {
     if (input.trim() === "") return;
 
     const userMessage = {
       text: input,
-      sender: "Sender Name",
+      sender: "user",
     };
 
     // Add user message to chat
