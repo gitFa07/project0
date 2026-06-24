@@ -49,7 +49,7 @@ await Chat.create({
   sender: "AI",
 });
 
-res.json({
+return res.json({
   success: true,
   reply,
 });
@@ -61,10 +61,12 @@ res.json({
   } catch (error) {
     console.error(error);
 
-    res.status(500).json({
+  if (!res.headersSent) {
+    return res.status(500).json({
       success: false,
       error: "Internal Server Error",
     });
+  }
   }
 });
 
