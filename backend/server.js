@@ -40,19 +40,19 @@ app.post("/home", async (req, res) => {
       contents: message,
     });
 
-const reply = response.text;
+    const reply = response.text;
 
-console.log("AI Reply:", reply);
+    console.log("AI Reply:", reply);
 
-await Chat.create({
-  text: reply,
-  sender: "AI",
-});
+    await Chat.create({
+      text: reply,
+      sender: "AI",
+    });
 
-return res.json({
-  success: true,
-  reply,
-});
+    return res.json({
+      success: true,
+      reply,
+    });
 
     res.json({
       success: true,
@@ -61,12 +61,12 @@ return res.json({
   } catch (error) {
     console.error(error);
 
-  if (!res.headersSent) {
-    return res.status(500).json({
-      success: false,
-      error: "Internal Server Error",
-    });
-  }
+    if (!res.headersSent) {
+      return res.status(500).json({
+        success: false,
+        error: "Internal Server Error",
+      });
+    }
   }
 });
 
