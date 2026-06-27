@@ -14,7 +14,28 @@ function ChatWindow({ chatId }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setMessages([]);
+    if (!chatId) return;
+
+    const getMessages = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/conversation/${chatId}`);
+
+        const data = await res.json();
+
+        if (data.success) {
+          const formattedMessages = data.conversation.messages.map((msg) => ({
+            text: msg.text,
+            sender: msg.role === "assistant" ? "AI" : "user",
+          }));
+
+          setMessages(formattedMessages);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    getMessages();
   }, [chatId]);
 
   // const getChats = async () => {

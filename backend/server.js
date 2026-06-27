@@ -23,7 +23,6 @@ app.post("/conversation", async (req, res) => {
   try {
     const conversation = await Conversation.create({
       title: "New Chat",
-      messages: [],
     });
 
     res.status(201).json({
@@ -44,7 +43,7 @@ app.post("/conversation", async (req, res) => {
 app.get("/conversation", async (req, res) => {
   try {
     const conversations = await Conversation.find().sort({
-      updatedAt: -1,
+      createdAt: -1,
     });
 
     res.json({
@@ -61,40 +60,6 @@ app.get("/conversation", async (req, res) => {
   }
 });
 
-// // Send message to Gemini
-// app.post("/home", async (req, res) => {
-//   try {
-//     const { message } = req.body;
-
-//     if (!message) {
-//       return res.status(400).json({
-//         success: false,
-//         error: "Message is required",
-//       });
-//     }
-
-//     const response = await ai.models.generateContent({
-//       model: "gemini-2.5-flash",
-//       contents: message,
-//     });
-
-//     const reply = response.text;
-
-//     return res.json({
-//       success: true,
-//       reply,
-//     });
-//   } catch (error) {
-//     console.error(error);
-
-//     return res.status(500).json({
-//       success: false,
-//       error: "Internal Server Error",
-//     });
-//   }
-// });
-
-// Send message and save it in the conversation
 app.post("/home", async (req, res) => {
   try {
     const { chatId, message } = req.body;
@@ -157,6 +122,89 @@ app.post("/home", async (req, res) => {
     res.status(500).json({
       success: false,
       error: error.message,
+    });
+  }
+});
+
+app.get("/conversation/:id", async (req, res) => {
+  try {
+    const conversation = await Conversation.findById(req.params.id);
+
+    if (!conversation) {
+      return res.status(404).json({
+        success: false,
+        message: "Conversation not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      conversation,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
+
+//Remane controller
+app.put("/chat/:id", async (req, res) => {
+  try {
+    const { title } = req.body;
+
+    const conversation = await Conversation.findByIdAndUpdate(
+      req.params.id,
+      { title },
+      { new: true },
+    );
+
+    if (!conversation) {
+      return res.status(404).json({
+        success: false,
+        message: "Conversation not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      conversation,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
+
+//Delete route
+app.delete("/chat/:id", async (req, res) => {
+  try {
+    const deletedConversation = await Conversation.findByIdAndDelete(
+      req.params.id,
+    );
+
+    if (!deletedConversation) {
+      return res.status(404).json({
+        success: false,
+        message: "Conversation not found",
+      });
+    }
+
+    res.json({
+      success: true,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: err.message,
     });
   }
 });
