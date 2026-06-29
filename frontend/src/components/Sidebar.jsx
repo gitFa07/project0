@@ -1,9 +1,11 @@
+import { LuSquarePen } from "react-icons/lu";
 import { useState } from "react";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
 function Sidebar({
   createNewChat,
   conversations,
+  chatId,
   setChatId,
   setConversations,
 }) {
@@ -55,12 +57,13 @@ function Sidebar({
 
   return (
     //Component body. Design a sidebar here.
-    <div className="w-64 bg-[#171717] border-r border-gray-800 p-4">
+    <div className="w-64 bg-[#0C0C0C] border-r border-[#0C0C0C] p-4">
       <button
-        className="w-full bg-gray-700 hover:bg-gray-600 rounded-lg py-2 mb-6"
+        className="w-full bg-[#314CB6] hover:bg-[#0A81D1] rounded-lg py-2 mb-6 font-bold text-white flex items-center justify-center gap-2"
         onClick={createNewChat}
       >
-        + New Chat
+        <LuSquarePen size={20} />
+        <span>New Chat</span>
       </button>
 
       <div className="space-y-2">
@@ -68,7 +71,11 @@ function Sidebar({
           <div
             key={conversation._id}
             onClick={() => setChatId(conversation._id)}
-            className="flex justify-between items-center p-3 rounded-lg hover:bg-gray-800 cursor-pointer group"
+            className={`flex justify-between items-center p-2 rounded-lg cursor-pointer group transition-colors ${
+              chatId === conversation._id
+                ? "bg-[#222223]"
+                : "hover:bg-[#222223]"
+            }`}
           >
             {editingId === conversation._id ? (
               <input

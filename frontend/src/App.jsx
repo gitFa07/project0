@@ -51,8 +51,9 @@ function App() {
   return (
     <div className="flex h-screen bg-[#212121] text-white">
       <Sidebar
-        conversations={conversations}
         createNewChat={createNewChat}
+        conversations={conversations}
+        chatId={chatId}
         setChatId={setChatId}
         setConversations={setConversations}
       />

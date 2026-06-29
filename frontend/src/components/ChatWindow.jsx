@@ -104,21 +104,39 @@ function ChatWindow({ chatId }) {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#212121] text-white">
+    <div className="flex-1 flex flex-col bg-[#170A1C] text-white">
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
-        {messages.map((msg, index) => (
-          <Message key={index} text={msg.text} sender={msg.sender} />
-        ))}
+      <div className="flex-1 overflow-y-auto p-6">
+        {messages.length === 0 ? (
+          <div className="flex h-full items-center justify-center">
+            <div className="text-center">
+              <img
+                src="src\assets\logo.png"
+                alt="Logo"
+                className="w-20 h-20 mx-auto mb-6"
+              />
+              <h1 className="text-4xl font-bold text-white">Welcome</h1>
+              <p className="mt-3 text-gray-400 text-lg">
+                How may I help you today?
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {messages.map((msg, index) => (
+              <Message key={index} text={msg.text} sender={msg.sender} />
+            ))}
 
-        {loading && (
-          <div className="text-gray-400 italic">AI is responding...</div>
+            {loading && (
+              <div className="text-gray-400 italic">AI is responding...</div>
+            )}
+          </div>
         )}
       </div>
 
       {/* Input Area */}
-      <div className="border-t border-gray-800 p-4">
-        <div className="max-w-4xl mx-auto flex items-center bg-[#2f2f2f] rounded-2xl px-4 py-2">
+      <div className="border-t border-black p-4">
+        <div className="max-w-4xl mx-auto flex items-center bg-[#1F0322] rounded-2xl px-4 py-2">
           <input
             type="text"
             placeholder="Type your message"
@@ -128,7 +146,7 @@ function ChatWindow({ chatId }) {
               if (e.key === "Enter") sendMessage();
             }}
             disabled={loading}
-            className="flex-1 bg-transparent outline-none text-white placeholder-gray-400"
+            className="flex-1 bg-transparent outline-none text-white placeholder-white"
           />
 
           <button
