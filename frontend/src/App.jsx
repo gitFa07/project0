@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 function App() {
   const [chatId, setChatId] = useState(null);
   const [conversations, setConversations] = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const createNewChat = async () => {
     try {
@@ -50,14 +51,21 @@ function App() {
 
   return (
     <div className="flex h-screen bg-[#212121] text-white">
-      <Sidebar
-        createNewChat={createNewChat}
-        conversations={conversations}
+      {sidebarOpen && (
+        <Sidebar
+          createNewChat={createNewChat}
+          conversations={conversations}
+          chatId={chatId}
+          setChatId={setChatId}
+          setConversations={setConversations}
+          setSidebarOpen={setSidebarOpen}
+        />
+      )}
+      <ChatWindow
         chatId={chatId}
-        setChatId={setChatId}
-        setConversations={setConversations}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
       />
-      <ChatWindow chatId={chatId} />
     </div>
   );
 }

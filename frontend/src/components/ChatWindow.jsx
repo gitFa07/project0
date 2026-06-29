@@ -1,8 +1,9 @@
 import Message from "./Message";
 import { useState, useEffect } from "react";
 import { IoSend } from "react-icons/io5";
+import { RiSidebarUnfoldLine } from "react-icons/ri";
 
-function ChatWindow({ chatId }) {
+function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
   const [messages, setMessages] = useState([
     //   {
     //     text: "Hello",
@@ -104,7 +105,15 @@ function ChatWindow({ chatId }) {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#170A1C] text-white">
+    <div className="relative flex-1 flex flex-col bg-[#212121] text-white">
+      {!sidebarOpen && (
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="absolute top-4 left-4 p-2 rounded-lg hover:bg-[#2f2f2f] transition"
+        >
+          <RiSidebarUnfoldLine size={22} />
+        </button>
+      )}
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-6">
         {messages.length === 0 ? (
@@ -136,7 +145,7 @@ function ChatWindow({ chatId }) {
 
       {/* Input Area */}
       <div className="border-t border-black p-4">
-        <div className="max-w-4xl mx-auto flex items-center bg-[#1F0322] rounded-2xl px-4 py-2">
+        <div className="max-w-4xl mx-auto flex items-center bg-[#130214] rounded-2xl px-4 py-2">
           <input
             type="text"
             placeholder="Type your message"
