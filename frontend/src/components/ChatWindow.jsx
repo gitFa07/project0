@@ -1,18 +1,22 @@
 import Message from "./Message";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { IoSend } from "react-icons/io5";
 import { RiSidebarUnfoldLine } from "react-icons/ri";
+import TypingIndicator from "./TypingIndicator";
 
 function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
-  const [messages, setMessages] = useState([
-    //   {
-    //     text: "Hello",
-    //     sender: "user1",
-    //   },
-  ]);
-
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [messages, loading]);
 
   useEffect(() => {
     if (!chatId) return;
@@ -101,6 +105,8 @@ function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
       ]);
     } finally {
       setLoading(false);
+
+      inputRef.current?.focus();
     }
   };
 
@@ -115,7 +121,7 @@ function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
         </button>
       )}
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
         {messages.length === 0 ? (
           <div className="flex h-full items-center justify-center">
             <div className="text-center">
@@ -136,9 +142,9 @@ function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
               <Message key={index} text={msg.text} sender={msg.sender} />
             ))}
 
-            {loading && (
-              <div className="text-gray-400 italic">AI is responding...</div>
-            )}
+            {loading && <TypingIndicator />}
+
+            <div ref={messagesEndRef} />
           </div>
         )}
       </div>
@@ -147,6 +153,7 @@ function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
       <div className="border-t border-black p-4">
         <div className="max-w-4xl mx-auto flex items-center bg-[#130214] rounded-2xl px-4 py-2">
           <input
+            ref={inputRef}
             type="text"
             placeholder="Type your message"
             value={input}
@@ -161,7 +168,7 @@ function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
           <button
             onClick={sendMessage}
             disabled={loading}
-            className="ml-3 text-xl hover:scale-110 transition-transform disabled:opacity-50"
+            className="ml-3 text-xl transition-transform hover:scale-110 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
             <IoSend />
           </button>

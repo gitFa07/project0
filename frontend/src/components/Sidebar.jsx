@@ -1,9 +1,13 @@
-import { FiChevronDown, FiChevronRight } from "react-icons/fi";
-import { LuSquarePen } from "react-icons/lu";
 import { useState } from "react";
-import { FiEdit2, FiTrash2 } from "react-icons/fi";
-import logo from "../assets/logo.png";
+import {
+  FiChevronDown,
+  FiChevronRight,
+  FiEdit2,
+  FiTrash2,
+} from "react-icons/fi";
+import { LuSquarePen } from "react-icons/lu";
 import { RiSidebarFoldLine } from "react-icons/ri";
+import logo from "../assets/logo.png";
 
 function Sidebar({
   createNewChat,
@@ -16,6 +20,7 @@ function Sidebar({
   const [editingId, setEditingId] = useState(null);
   const [editingTitle, setEditingTitle] = useState("");
   const [showRecents, setShowRecents] = useState(true);
+
   const renameChat = async (id, newTitle) => {
     if (!newTitle.trim()) return;
 
@@ -53,7 +58,9 @@ function Sidebar({
       if (data.success) {
         setConversations((prev) => prev.filter((chat) => chat._id !== id));
 
-        setChatId(null);
+        if (chatId === id) {
+          setChatId(null);
+        }
       }
     } catch (err) {
       console.log(err);
@@ -61,53 +68,55 @@ function Sidebar({
   };
 
   return (
-    //Component body. Design a sidebar here.
-    <div className="w-64 bg-[#0C0C0C] border-r border-[#0C0C0C] p-4">
-      <div className="flex items-center justify-between mb-5">
-        {/* Logo */}
-        <button
+    <div className="w-64 h-screen bg-[#0C0C0C] border-r border-[#1e1e1e] flex flex-col">
+      {/* Header */}
+      <div className="px-3 pt-4">
+        <div className="flex items-center justify-between mb-5">
+          <button
+            onClick={createNewChat}
+            className="p-2 rounded-lg hover:bg-[#222223] transition"
+          >
+            <img src={logo} alt="Logo" className="w-8 h-8" />
+          </button>
+
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="p-2 rounded-lg hover:bg-[#222223] transition"
+          >
+            <RiSidebarFoldLine size={22} />
+          </button>
+        </div>
+
+        <div
           onClick={createNewChat}
-          className="p-2 rounded-lg hover:bg-[#222223] transition"
+          className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#222223] cursor-pointer transition mb-4"
         >
-          <img src={logo} alt="Logo" className="w-8 h-8" />
-        </button>
+          <LuSquarePen size={20} />
+          <span className="font-medium">New Chat</span>
+        </div>
 
-        {/* Collapse Sidebar */}
-        <button
-          onClick={() => setSidebarOpen(false)}
-          className="p-2 rounded-lg hover:bg-[#222223] transition"
+        <div
+          onClick={() => setShowRecents(!showRecents)}
+          className="flex items-center gap-1 p-2 rounded-lg hover:bg-[#222223] cursor-pointer text-gray-300 mb-2"
         >
-          <RiSidebarFoldLine size={22} />
-        </button>
-      </div>
-      <div
-        onClick={createNewChat}
-        className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#222223] cursor-pointer mb-4"
-      >
-        <LuSquarePen size={20} />
-        <span className="font-medium">New Chat</span>
-      </div>
+          {showRecents ? (
+            <FiChevronDown size={16} />
+          ) : (
+            <FiChevronRight size={16} />
+          )}
 
-      <div
-        onClick={() => setShowRecents(!showRecents)}
-        className="flex items-center gap-1 p-2 rounded-lg hover:bg-[#222223] cursor-pointer mb-2 text-gray-300"
-      >
-        {showRecents ? (
-          <FiChevronDown size={16} />
-        ) : (
-          <FiChevronRight size={16} />
-        )}
-
-        <span className="font-semibold">Recents</span>
+          <span className="font-semibold">Recents</span>
+        </div>
       </div>
 
+      {/* Scrollable Conversation List */}
       {showRecents && (
-        <div className="space-y-2">
+        <div className="flex-1 overflow-y-auto px-2 pb-3 sidebar-scroll">
           {conversations.map((conversation) => (
             <div
               key={conversation._id}
               onClick={() => setChatId(conversation._id)}
-              className={`flex justify-between items-center p-2 rounded-lg cursor-pointer group transition-colors ${
+              className={`w-full flex items-center justify-between p-3 rounded-lg cursor-pointer group transition-colors ${
                 chatId === conversation._id
                   ? "bg-[#222223]"
                   : "hover:bg-[#222223]"
@@ -128,15 +137,13 @@ function Sidebar({
                     setEditingId(null);
                   }}
                   autoFocus
-                  className="bg-transparent border border-gray-500 rounded px-2 py-1 flex-1 outline-none"
+                  className="flex-1 bg-transparent border border-gray-500 rounded px-2 py-1 outline-none"
                 />
               ) : (
-                <span className="cursor-pointer flex-1">
-                  {conversation.title}
-                </span>
+                <span className="flex-1 truncate">{conversation.title}</span>
               )}
 
-              <div className="flex gap-2">
+              <div className="flex gap-2 ml-2">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -153,7 +160,7 @@ function Sidebar({
                     e.stopPropagation();
                     deleteChat(conversation._id);
                   }}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-400"
                 >
                   <FiTrash2 size={16} />
                 </button>
