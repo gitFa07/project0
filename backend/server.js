@@ -126,6 +126,74 @@ app.post("/home", async (req, res) => {
   }
 });
 
+app.post("/stream", async (req, res) => {
+  try {
+    const { chatId, message } = req.body;
+
+    if (!chatId || !message) {
+      return res.status(400).json({
+        success: false,
+        error: "chatId and message are required",
+      });
+    }
+
+    const conversation = await Conversation.findById(chatId);
+
+    if (!conversation) {
+      return res.status(404).json({
+        success: false,
+        error: "Conversation not found",
+      });
+    }
+
+    // Save user message
+    conversation.messages.push({
+      role: "user",
+      text: message,
+    });
+
+    // Important headers
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.setHeader("Transfer-Encoding", "chunked");
+
+    let fullReply = "";
+
+    const stream = await ai.models.generateContentStream({
+      model: "gemini-2.5-flash",
+      contents: message,
+    });
+
+    for await (const chunk of stream) {
+      const text = chunk.text;
+
+      if (text) {
+        fullReply += text;
+        res.write(text);
+      }
+    }
+
+    conversation.messages.push({
+      role: "assistant",
+      text: fullReply,
+    });
+
+    if (
+      conversation.title === "New Chat" &&
+      conversation.messages.length === 2
+    ) {
+      conversation.title =
+        message.length > 40 ? message.substring(0, 40) + "..." : message;
+    }
+
+    await conversation.save();
+
+    res.end();
+  } catch (err) {
+    console.error(err);
+    res.status(500).end();
+  }
+});
+
 app.get("/conversation/:id", async (req, res) => {
   try {
     const conversation = await Conversation.findById(req.params.id);

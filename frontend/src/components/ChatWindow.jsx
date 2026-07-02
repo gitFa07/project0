@@ -1,7 +1,7 @@
-import Message from "./Message";
 import { useState, useEffect, useRef } from "react";
 import { IoSend } from "react-icons/io5";
 import { RiSidebarUnfoldLine } from "react-icons/ri";
+import Message from "./Message";
 import TypingIndicator from "./TypingIndicator";
 
 function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
@@ -57,7 +57,6 @@ function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
 
   const sendMessage = async () => {
     if (!chatId) return;
-
     if (input.trim() === "") return;
 
     const userMessage = {
@@ -65,15 +64,24 @@ function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
       sender: "user",
     };
 
-    // Add user message to chat
-    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    // Show the user's message immediately
+    setMessages((prev) => [...prev, userMessage]);
 
     const currentInput = input;
     setInput("");
     setLoading(true);
 
+    // Create an empty AI message
+    setMessages((prev) => [
+      ...prev,
+      {
+        text: "",
+        sender: "AI",
+      },
+    ]);
+
     try {
-      const response = await fetch("http://localhost:5000/home", {
+      const response = await fetch("http://localhost:5000/stream", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,29 +92,50 @@ function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
         }),
       });
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error("Failed to connect to server");
+      }
 
-      const aiMessage = {
-        text: data.reply,
-        sender: "AI",
-      };
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
 
-      // Add AI response
-      setMessages((prevMessages) => [...prevMessages, aiMessage]);
+      let fullText = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+
+        fullText += chunk;
+
+        setMessages((prev) => {
+          const updated = [...prev];
+
+          updated[updated.length - 1] = {
+            sender: "AI",
+            text: fullText,
+          };
+
+          return updated;
+        });
+      }
     } catch (error) {
       console.error(error);
 
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          text: "Something went wrong, please try again.",
+      setMessages((prev) => {
+        const updated = [...prev];
+
+        updated[updated.length - 1] = {
           sender: "AI",
-        },
-      ]);
+          text: "Something went wrong, please try again.",
+        };
+
+        return updated;
+      });
     } finally {
       setLoading(false);
-
-      inputRef.current?.focus();
     }
   };
 
@@ -141,8 +170,6 @@ function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
             {messages.map((msg, index) => (
               <Message key={index} text={msg.text} sender={msg.sender} />
             ))}
-
-            {loading && <TypingIndicator />}
 
             <div ref={messagesEndRef} />
           </div>
