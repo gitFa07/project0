@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { GoogleGenAI } from "@google/genai";
 import connectDB from "./config/db.js";
 import Conversation from "./models/Conversations.js";
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ connectDB();
 
 app.use(cors());
 app.use(express.json());
+app.use("/api/auth", authRoutes);
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
