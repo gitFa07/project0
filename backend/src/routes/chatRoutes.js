@@ -13,12 +13,15 @@ import {
 
 const router = express.Router();
 
-router.post("/api/chat/conversation", protect, createConversation);
-router.get("/api/chat/conversation", protect, getConversations);
-router.post("/api/chat/home", protect, sendMessage);
-router.post("/api/chat/stream", protect, streamMessage);
-router.get("/api/chat/conversation/:id", protect, getConversation);
-router.put("/api/chat/chat/:id", protect, renameConversation);
+router.post("/conversation", protect, createConversation);
+router.get("/conversation", protect, getConversations);
+
+router.post("/home", protect, sendMessage);
+router.post("/stream", protect, streamMessage);
+
+router.get("/conversation/:id", protect, getConversation);
+
+router.put("/chat/:id", protect, renameConversation);
 router.delete("/chat/:id", protect, deleteConversation);
 
 export default router;

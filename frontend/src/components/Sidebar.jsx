@@ -8,6 +8,7 @@ import {
 import { LuSquarePen } from "react-icons/lu";
 import { RiSidebarFoldLine } from "react-icons/ri";
 import logo from "../assets/logo.png";
+import api from "../services/api";
 
 function Sidebar({
   createNewChat,
@@ -25,17 +26,9 @@ function Sidebar({
     if (!newTitle.trim()) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/chat/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: newTitle,
-        }),
+      const { data } = await api.put(`/chat/chat/${id}`, {
+        title: newTitle,
       });
-
-      const data = await res.json();
 
       if (data.success) {
         setConversations((prev) =>
@@ -43,17 +36,13 @@ function Sidebar({
         );
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
   const deleteChat = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/chat/${id}`, {
-        method: "DELETE",
-      });
-
-      const data = await res.json();
+      const { data } = await api.delete(`/chat/chat/${id}`);
 
       if (data.success) {
         setConversations((prev) => prev.filter((chat) => chat._id !== id));
@@ -63,7 +52,7 @@ function Sidebar({
         }
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 

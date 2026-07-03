@@ -1,72 +1,37 @@
-import Sidebar from "./components/Sidebar";
-import ChatWindow from "./components/ChatWindow";
-import { useState, useEffect } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Home from "./pages/Home";
+
+import ProtectedRoute from "./components/ProtectedRoute";
+
+import { useAuth } from "./context/AuthContext";
 
 function App() {
-  const [chatId, setChatId] = useState(null);
-  const [conversations, setConversations] = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-
-  const createNewChat = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/conversation", {
-        method: "POST",
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setChatId(data.conversation._id);
-        // await getConversations();
-        setConversations((previous) => [data.conversation, ...previous]);
-      }
-    } catch (error) {
-      console.error("Failed to create conversation:", error);
-    }
-  };
-
-  useEffect(() => {
-    getConversations();
-  }, []);
-
-  const getConversations = async () => {
-    const res = await fetch("http://localhost:5000/conversation");
-    const data = await res.json();
-
-    try {
-      if (data.success) {
-        setConversations(data.conversations);
-        if (data.conversations.length > 0) {
-          setChatId(data.conversations[0]._id);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // useEffect(() => {
-  //   getConversations();
-  // }, []);
+  const { isAuthenticated } = useAuth();
 
   return (
-    <div className="flex h-screen bg-[#212121] text-white">
-      {sidebarOpen && (
-        <Sidebar
-          createNewChat={createNewChat}
-          conversations={conversations}
-          chatId={chatId}
-          setChatId={setChatId}
-          setConversations={setConversations}
-          setSidebarOpen={setSidebarOpen}
-        />
-      )}
-      <ChatWindow
-        chatId={chatId}
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
+    <Routes>
+      <Route
+        path="/login"
+        element={isAuthenticated ? <Navigate to="/" replace /> : <Login />}
       />
-    </div>
+
+      <Route
+        path="/register"
+        element={isAuthenticated ? <Navigate to="/" replace /> : <Register />}
+      />
+
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
   );
 }
 

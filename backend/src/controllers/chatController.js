@@ -1,6 +1,10 @@
 import Conversation from "../models/Conversations.js";
 import ai from "../utils/gemini.js";
-import { generateConversationTitle } from "../utils/conversationHelpers.js";
+import {
+  findUserConversation,
+  conversationNotFound,
+  generateConversationTitle,
+} from "../utils/conversationHelpers.js";
 
 export const createConversation = async (req, res) => {
   try {
@@ -103,6 +107,7 @@ export const sendMessage = async (req, res) => {
 };
 
 export const streamMessage = async (req, res) => {
+  console.log("✅ streamMessage controller reached");
   try {
     const { chatId, message } = req.body;
 
@@ -168,7 +173,10 @@ export const streamMessage = async (req, res) => {
 
 export const getConversation = async (req, res) => {
   try {
-    const conversation = await findUserConversation(chatId, req.user._id);
+    const conversation = await findUserConversation(
+      req.params.id,
+      req.user._id,
+    );
 
     if (!conversation) {
       return conversationNotFound(res);

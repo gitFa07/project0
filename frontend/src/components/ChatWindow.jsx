@@ -2,12 +2,16 @@ import { useState, useEffect, useRef } from "react";
 import { IoSend } from "react-icons/io5";
 import { RiSidebarUnfoldLine } from "react-icons/ri";
 import Message from "./Message";
-import TypingIndicator from "./TypingIndicator";
+import api from "../services/api";
+import logo from "../assets/logo.png";
+import { useAuth } from "../context/AuthContext";
 
 function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const { token } = useAuth();
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -23,9 +27,7 @@ function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
 
     const getMessages = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/conversation/${chatId}`);
-
-        const data = await res.json();
+        const { data } = await api.get(`/chat/conversation/${chatId}`);
 
         if (data.success) {
           const formattedMessages = data.conversation.messages.map((msg) => ({
@@ -42,18 +44,6 @@ function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
 
     getMessages();
   }, [chatId]);
-
-  // const getChats = async () => {
-  //   try {
-  //     const response = await fetch("http://localhost:5000/conversation");
-  //     const data = await response.json();
-  //     if (data.success) {
-  //       setMessages(data.chats);
-  //     }
-  //   } catch (error) {
-  //     console.log("Error fetching chats", error);
-  //   }
-  // };
 
   const sendMessage = async () => {
     if (!chatId) return;
@@ -81,10 +71,11 @@ function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
     ]);
 
     try {
-      const response = await fetch("http://localhost:5000/stream", {
+      const response = await fetch("http://localhost:5000/api/chat/stream", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           chatId,
@@ -154,11 +145,7 @@ function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
         {messages.length === 0 ? (
           <div className="flex h-full items-center justify-center">
             <div className="text-center">
-              <img
-                src="src\assets\logo.png"
-                alt="Logo"
-                className="w-20 h-20 mx-auto mb-6"
-              />
+              <img src={logo} alt="Logo" className="w-20 h-20 mx-auto mb-6" />
               <h1 className="text-4xl font-bold text-white">Welcome</h1>
               <p className="mt-3 text-gray-400 text-lg">
                 How may I help you today?
