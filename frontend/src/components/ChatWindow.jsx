@@ -39,7 +39,7 @@ function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
           setMessages(formattedMessages);
         }
       } catch (err) {
-        console.log(err);
+        console.log("Error fetching Message");
       }
     };
 
@@ -114,7 +114,7 @@ function ChatWindow({ chatId, sidebarOpen, setSidebarOpen }) {
         });
       }
     } catch (error) {
-      console.error(error);
+      console.setError("Failed to send message.");
 
       setMessages((prev) => {
         const updated = [...prev];

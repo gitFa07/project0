@@ -17,7 +17,7 @@ function Home() {
         setConversations((previous) => [data.conversation, ...previous]);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error occured");
     }
   };
 
@@ -33,7 +33,7 @@ function Home() {
         }
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error occured");
     }
   };
 

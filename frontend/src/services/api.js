@@ -30,24 +30,15 @@ api.interceptors.response.use(
     if (error.response) {
       switch (error.response.status) {
         case 401:
-          // Token expired or invalid
           localStorage.removeItem("token");
           localStorage.removeItem("user");
-
-          // Redirect to login page
           window.location.href = "/login";
-          break;
+          return Promise.reject(error);
 
         case 403:
-          console.error("Access denied.");
-          break;
-
         case 500:
-          console.error("Internal Server Error.");
-          break;
-
         default:
-          break;
+          return Promise.reject(error);
       }
     }
 

@@ -42,7 +42,7 @@ function Sidebar({
         );
       }
     } catch (err) {
-      console.error(err);
+      console.error("Error occured");
     }
   };
 
@@ -58,7 +58,7 @@ function Sidebar({
         }
       }
     } catch (err) {
-      console.error(err);
+      console.error("Error occured");
     }
   };
 
