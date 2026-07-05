@@ -6,7 +6,7 @@ import {
   generateConversationTitle,
 } from "../utils/conversationHelpers.js";
 
-export const createConversation = async (req, res) => {
+export const createConversation = async (req, res, next) => {
   try {
     const conversation = await Conversation.create({
       userId: req.user._id,
@@ -18,16 +18,11 @@ export const createConversation = async (req, res) => {
       conversation,
     });
   } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    next(err);
   }
 };
 
-export const getConversations = async (req, res) => {
+export const getConversations = async (req, res, next) => {
   try {
     const conversations = await Conversation.find({
       userId: req.user._id,
@@ -40,16 +35,11 @@ export const getConversations = async (req, res) => {
       conversations,
     });
   } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    next(err);
   }
 };
 
-export const sendMessage = async (req, res) => {
+export const sendMessage = async (req, res, next) => {
   try {
     const { chatId, message } = req.body;
 
@@ -97,17 +87,11 @@ export const sendMessage = async (req, res) => {
       reply,
     });
   } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    next(err);
   }
 };
 
-export const streamMessage = async (req, res) => {
-  console.log("✅ streamMessage controller reached");
+export const streamMessage = async (req, res, next) => {
   try {
     const { chatId, message } = req.body;
 
@@ -166,12 +150,11 @@ export const streamMessage = async (req, res) => {
 
     res.end();
   } catch (err) {
-    console.error(err);
-    res.status(500).end();
+    next(err);
   }
 };
 
-export const getConversation = async (req, res) => {
+export const getConversation = async (req, res, next) => {
   try {
     const conversation = await findUserConversation(
       req.params.id,
@@ -187,16 +170,11 @@ export const getConversation = async (req, res) => {
       conversation,
     });
   } catch (err) {
-    console.error(err);
-
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    next(err);
   }
 };
 
-export const renameConversation = async (req, res) => {
+export const renameConversation = async (req, res, next) => {
   try {
     const { title } = req.body;
 
@@ -222,15 +200,11 @@ export const renameConversation = async (req, res) => {
       conversation,
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    next(err);
   }
 };
 
-export const deleteConversation = async (req, res) => {
+export const deleteConversation = async (req, res, next) => {
   try {
     const deletedConversation = await Conversation.findOneAndDelete({
       _id: req.params.id,
@@ -248,11 +222,6 @@ export const deleteConversation = async (req, res) => {
       success: true,
     });
   } catch (err) {
-    console.error(err);
-
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    next(err);
   }
 };

@@ -1,14 +1,17 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FiChevronDown,
   FiChevronRight,
   FiEdit2,
   FiTrash2,
+  FiLogOut,
 } from "react-icons/fi";
 import { LuSquarePen } from "react-icons/lu";
 import { RiSidebarFoldLine } from "react-icons/ri";
 import logo from "../assets/logo.png";
 import api from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 function Sidebar({
   createNewChat,
@@ -21,6 +24,9 @@ function Sidebar({
   const [editingId, setEditingId] = useState(null);
   const [editingTitle, setEditingTitle] = useState("");
   const [showRecents, setShowRecents] = useState(true);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
 
   const renameChat = async (id, newTitle) => {
     if (!newTitle.trim()) return;
@@ -56,6 +62,15 @@ function Sidebar({
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  const filteredConversations = conversations.filter((conversation) =>
+    conversation.title.toLowerCase().includes(search.toLowerCase()),
+  );
+
   return (
     <div className="w-64 h-screen bg-[#0C0C0C] border-r border-[#1e1e1e] flex flex-col">
       {/* Header */}
@@ -84,6 +99,14 @@ function Sidebar({
           <span className="font-medium">New Chat</span>
         </div>
 
+        <input
+          type="text"
+          placeholder="Search chats..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full mb-4 rounded-lg bg-[#171717] border border-[#2f2f2f] px-3 py-2 text-sm text-white placeholder-gray-500 outline-none focus:border-gray-500"
+        />
+
         <div
           onClick={() => setShowRecents(!showRecents)}
           className="flex items-center gap-1 p-2 rounded-lg hover:bg-[#222223] cursor-pointer text-gray-300 mb-2"
@@ -101,7 +124,7 @@ function Sidebar({
       {/* Scrollable Conversation List */}
       {showRecents && (
         <div className="flex-1 overflow-y-auto px-2 pb-3 sidebar-scroll">
-          {conversations.map((conversation) => (
+          {filteredConversations.map((conversation) => (
             <div
               key={conversation._id}
               onClick={() => setChatId(conversation._id)}
@@ -158,6 +181,30 @@ function Sidebar({
           ))}
         </div>
       )}
+      {/* User Profile */}
+      <div className="border-t border-[#1e1e1e] p-3">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-600 font-semibold text-white">
+            {user?.name?.charAt(0).toUpperCase()}
+          </div>
+
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-white">
+              {user?.name}
+            </p>
+
+            <p className="truncate text-xs text-gray-400">{user?.email}</p>
+          </div>
+        </div>
+
+        <button
+          onClick={handleLogout}
+          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-300 hover:bg-[#222223] hover:text-white transition"
+        >
+          <FiLogOut size={16} />
+          Logout
+        </button>
+      </div>
     </div>
   );
 }
