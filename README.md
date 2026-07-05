@@ -118,7 +118,7 @@ project0/
 ## Clone Repository
 
 ```bash
-git clone https://github.com/<your-username>/<repository-name>.git
+git clone https://github.com/gitFa07/project0.git
 
 cd project0
 ```
