@@ -94,6 +94,14 @@ export const sendMessage = async (req, res, next) => {
 export const streamMessage = async (req, res, next) => {
   try {
     const { chatId, message } = req.body;
+    const uploadedFile = req.file;
+
+    if (uploadedFile) {
+      console.log("File received:");
+      console.log(uploadedFile.originalname);
+      console.log(uploadedFile.mimetype);
+      console.log(uploadedFile.size);
+    }
 
     if (!chatId || !message) {
       return res.status(400).json({
@@ -120,9 +128,41 @@ export const streamMessage = async (req, res, next) => {
 
     let fullReply = "";
 
+    let contents;
+
+    if (uploadedFile) {
+      contents = [
+        {
+          role: "user",
+          parts: [
+            {
+              text: message,
+            },
+            {
+              inlineData: {
+                mimeType: uploadedFile.mimetype,
+                data: uploadedFile.buffer.toString("base64"),
+              },
+            },
+          ],
+        },
+      ];
+    } else {
+      contents = [
+        {
+          role: "user",
+          parts: [
+            {
+              text: message,
+            },
+          ],
+        },
+      ];
+    }
+
     const stream = await ai.models.generateContentStream({
       model: "gemini-2.5-flash",
-      contents: message,
+      contents,
     });
 
     for await (const chunk of stream) {
