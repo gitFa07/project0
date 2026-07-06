@@ -118,7 +118,7 @@ project0/
 ## Clone Repository
 
 ```bash
-git clone https://github.com/<your-username>/<repository-name>.git
+git clone https://github.com/gitFa07/project0.git
 
 cd project0
 ```
@@ -228,19 +228,19 @@ npm run dev
 
 ### Login
 
-_Add Screenshot_
+<img width="1918" height="1078" alt="image" src="https://github.com/user-attachments/assets/44056345-98ac-4281-ae99-6d14912e1990" />
 
 ### Register
 
-_Add Screenshot_
+<img width="1918" height="1078" alt="image" src="https://github.com/user-attachments/assets/62083e97-fab7-4463-bc6c-0c5714b1de68" />
 
 ### Chat Interface
 
-_Add Screenshot_
+<img width="1918" height="1078" alt="image" src="https://github.com/user-attachments/assets/bc15cf73-2744-4815-a134-4d34d8f4e7e6" />
 
 ### Markdown Rendering
 
-_Add Screenshot_
+<img width="1918" height="1078" alt="image" src="https://github.com/user-attachments/assets/ce3a7b29-9d76-40ed-9ef0-a6e3e3ca3024" />
 
 ### File Upload
 
