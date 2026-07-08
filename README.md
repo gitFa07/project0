@@ -285,9 +285,9 @@ MongoDB Atlas
 
 Software Engineering Aspirant
 
-GitHub: https://github.com/<your-github>
+GitHub: https://github.com/gitFa07
 
-LinkedIn: https://linkedin.com/in/<your-linkedin>
+LinkedIn: https://linkedin.com/in/falakanwar
 
 ---
 
